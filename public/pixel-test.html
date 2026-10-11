@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elena Rust — Digital Savannah Studio (Smart Pixel Live Verification)</title>
+  
+  <!-- Premium Typography Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons via CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --canvas: hsl(240, 10%, 6%);
+      --surface-low: hsl(38, 12%, 8%);
+      --surface-card: hsl(38, 12%, 11%);
+      --surface-container-highest: hsl(45, 13%, 19%);
+      --outline-variant: rgba(255, 255, 255, 0.05);
+      --primary: hsl(45, 86%, 63%);
+      --primary-fixed: hsl(45, 100%, 76%);
+      --tertiary: hsl(160, 84%, 39%);
+      --error: #ffb4ab;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--canvas);
+      color: #eae1d4;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Sunset Gradients */
+    .glow-blob-1 {
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(242, 202, 80, 0.06), transparent 70%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-blob-2 {
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.04), transparent 70%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Premium Header block */
+    header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      background: rgba(242, 202, 80, 0.06);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      border: 1px solid rgba(242, 202, 80, 0.15);
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #eae1d4;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    p.subtitle {
+      font-size: 1rem;
+      color: #99907c;
+      max-w: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Info Alert Card */
+    .info-card {
+      background: var(--surface-low);
+      border: 1px solid rgba(242, 202, 80, 0.15);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .info-icon {
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .info-content h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      color: var(--primary-fixed);
+    }
+
+    .info-content p {
+      font-size: 0.85rem;
+      color: #c9bfab;
+      line-height: 1.5;
+    }
+
+    /* Grid Layout for Interactive Zones */
+    .interactive-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .interactive-grid {
+        grid-template-columns: 1.2fr 1fr;
+      }
+    }
+
+    .glass-box {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--outline-variant);
+      border-radius: 16px;
+      padding: 1.75rem;
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #eae1d4;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--outline-variant);
+      padding-pb: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    /* Creator's Portfolio Links Preview */
+    .portfolio-link-button {
+      width: 100%;
+      background: var(--surface-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #eae1d4;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .portfolio-link-button:hover {
+      background: var(--surface-container-highest);
+      border-color: rgba(242, 202, 80, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(242, 202, 80, 0.08);
+    }
+
+    .portfolio-link-button .left-side {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .portfolio-link-button .icon-wrapper {
+      width: 32px;
+      height: 32px;
+      background: rgba(242, 202, 80, 0.06);
+      border: 1px solid rgba(242, 202, 80, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+
+    .portfolio-link-button:hover .icon-wrapper {
+      background: var(--primary);
+      color: #3c2f00;
+    }
+
+    .portfolio-link-button .link-text h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .portfolio-link-button .link-text span {
+      font-size: 0.75rem;
+      color: #99907c;
+      display: block;
+      margin-top: 0.15rem;
+      text-align: left;
+    }
+
+    /* Simulation settings controls */
+    .sim-control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .sim-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #99907c;
+      font-weight: 600;
+    }
+
+    .referrer-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .referrer-pill {
+      background: var(--surface-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      color: #eae1d4;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .referrer-pill:hover {
+      border-color: var(--primary);
+      background: rgba(242, 202, 80, 0.05);
+    }
+
+    .referrer-pill.active {
+      background: var(--primary);
+      color: #3c2f00;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Live Debug Terminal block */
+    .terminal-box {
+      width: 100%;
+      background: #08080a;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 250px;
+      max-height: 400px;
+    }
+
+    .terminal-header {
+      background: #121215;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .terminal-buttons {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .terminal-dot.red { background-color: #ffb4ab; }
+    .terminal-dot.yellow { background-color: var(--primary); }
+    .terminal-dot.green { background-color: var(--tertiary); }
+
+    .terminal-title {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: #99907c;
+    }
+
+    .terminal-clear {
+      font-size: 0.75rem;
+      color: #99907c;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: color 0.15s ease;
+    }
+
+    .terminal-clear:hover {
+      color: #eae1d4;
+    }
+
+    .terminal-logs {
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex-grow: 1;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .log-entry {
+      border-left: 2px solid #3c382f;
+      padding-left: 0.75rem;
+      animation: slideIn 0.2s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .log-entry.info { border-color: #f2ca50; }
+    .log-entry.success { border-color: #10b981; }
+    .log-entry.error { border-color: #ffb4ab; }
+
+    .log-time {
+      color: #4d4635;
+      font-size: 0.7rem;
+    }
+
+    .log-tag {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      margin-left: 0.25rem;
+    }
+
+    .log-tag.info { background: rgba(242, 202, 80, 0.1); color: #f2ca50; }
+    .log-tag.success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .log-tag.error { background: rgba(255, 180, 171, 0.1); color: #ffb4ab; }
+
+    .log-body {
+      color: #eae1d4;
+      margin-top: 0.25rem;
+      word-break: break-all;
+    }
+
+    .log-json {
+      background: #040405;
+      padding: 0.5rem;
+      border-radius: 6px;
+      margin-top: 0.35rem;
+      color: #c9bfab;
+      font-size: 0.75rem;
+      white-space: pre-wrap;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    /* Handshake Status Panel */
+    .status-pill-big {
+      background: var(--surface-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .status-dot-circle {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      position: relative;
+    }
+
+    .status-dot-circle.pulse {
+      animation: pulse-ring 2.5s infinite;
+    }
+
+    .status-dot-circle.active {
+      background-color: var(--tertiary);
+    }
+
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(242, 202, 80, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(242, 202, 80, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(242, 202, 80, 0); }
+    }
+
+    .status-text h4 {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-text p {
+      font-size: 0.75rem;
+      color: #99907c;
+      margin-top: 0.1rem;
+    }
+
+    .nav-back-button {
+      align-self: center;
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      border: 1px solid var(--outline-variant);
+      color: #eae1d4;
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-back-button:hover {
+      background: var(--surface-card);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+  </style>
+
+  <!-- ─── TEMBO SMART PIXEL CODE INJECTION ─── -->
+  <script>
+    !(function(t, e, m, b, o) {
+      t.TemboObject = m;
+      (t[m] = t[m] || function() {
+        (t[m].q = t[m].q || []).push(arguments);
+      }),
+      (t[m].l = 1 * new Date());
+      (b = e.createElement('script')), (o = e.getElementsByTagName('script')[0]);
+      b.async = 1;
+      b.src = '/pixel/v1/core.js';
+      o.parentNode.insertBefore(b, o);
+    })(window, document, 'tembo');
+
+    // Initialize Elena Rust's smart pixel herd ID
+    tembo('init', 'TMB-9842-XQ');
+    tembo('track', 'PageView');
+  </script>
+</head>
+<body>
+
+  <div class="glow-blob-1"></div>
+  <div class="glow-blob-2"></div>
+
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <div class="brand-logo">
+        <i data-lucide="radar" style="width: 14px; height: 14px;"></i>
+        Smart Pixel Live Sandpit
+      </div>
+      <h1>Elena Rust</h1>
+      <p class="subtitle">External Visitor Showcase. This sandbox represents a creator's personal website or blog where the smart pixel tracks traffic and click flows live.</p>
+    </header>
+
+    <!-- Info banner explaining direct firestore connection -->
+    <div class="info-card">
+      <div class="info-icon">
+        <i data-lucide="sparkles" style="width: 24px; height: 24px;"></i>
+      </div>
+      <div class="info-content">
+        <h3>Serverless Tracking Tunnel Enabled</h3>
+        <p>The Tembo Smart Pixel is fully active on this page. Referrer channels are automatically parsed, and events are dispatched directly to the active Firestore production project (<code>tembo-page-prod-25</code>) under the <code>analytics</code> collection.</p>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="interactive-grid">
+      
+      <!-- Column 1: Draggable/Clickable Portfolio cards -->
+      <div class="glass-box">
+        <h3 class="section-title">
+          <i data-lucide="globe" style="width: 16px; height: 16px; color: var(--primary);"></i>
+          Elena's Bio Links
+        </h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          
+          <a class="portfolio-link-button" onclick="triggerClick('store-merch', 'Exclusive Merch Drop')">
+            <div class="left-side">
+              <div class="icon-wrapper">
+                <i data-lucide="shopping-bag" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="link-text">
+                <h4>Exclusive Merch Drop</h4>
+                <span>store.tembo.page/merch</span>
+              </div>
+            </div>
+            <i data-lucide="arrow-up-right" style="width: 16px; height: 16px; color: #4d4635;"></i>
+          </a>
+
+          <a class="portfolio-link-button" onclick="triggerClick('youtube-vlog', 'Latest YouTube Cinematic Vlog')">
+            <div class="left-side">
+              <div class="icon-wrapper">
+                <i data-lucide="play-circle" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="link-text">
+                <h4>Latest YouTube Vlog</h4>
+                <span>youtube.com/watch?v=savannah</span>
+              </div>
+            </div>
+            <i data-lucide="arrow-up-right" style="width: 16px; height: 16px; color: #4d4635;"></i>
+          </a>
+
+          <a class="portfolio-link-button" onclick="triggerClick('newsletter-form', 'Join the Savannah Newsletter')">
+            <div class="left-side">
+              <div class="icon-wrapper">
+                <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
+              </div>
+              <div class="link-text">
+                <h4>Savannah Newsletter Signup</h4>
+                <span>tembo.page/newsletter</span>
+              </div>
+            </div>
+            <i data-lucide="arrow-up-right" style="width: 16px; height: 16px; color: #4d4635;"></i>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Column 2: Referrer / simulator variables panel -->
+      <div class="glass-box">
+        <h3 class="section-title">
+          <i data-lucide="settings" style="width: 16px; height: 16px; color: var(--primary);"></i>
+          Traffic Source Simulator
+        </h3>
+
+        <div class="sim-control-group">
+          <label class="sim-label">Simulate Referrer Source</label>
+          <p style="font-size: 0.75rem; color: #99907c; margin-bottom: 0.25rem;">
+            Click a channel to spoof the visitor referrer origin and trigger a fresh PageView tracking event.
+          </p>
+          <div class="referrer-pills">
+            <button class="referrer-pill active" onclick="setReferrer('direct', '')">
+              <i data-lucide="link" style="width: 12px; height: 12px;"></i> Direct Link
+            </button>
+            <button class="referrer-pill" onclick="setReferrer('instagram', 'https://instagram.com/elenarust')">
+              <i data-lucide="instagram" style="width: 12px; height: 12px;"></i> Instagram Bio
+            </button>
+            <button class="referrer-pill" onclick="setReferrer('tiktok', 'https://tiktok.com/@elenarust')">
+              <i data-lucide="navigation-2" style="width: 12px; height: 12px;"></i> TikTok Link
+            </button>
+            <button class="referrer-pill" onclick="setReferrer('youtube', 'https://youtube.com/c/elenarust')">
+              <i data-lucide="youtube" style="width: 12px; height: 12px;"></i> YouTube Description
+            </button>
+            <button class="referrer-pill" onclick="setReferrer('twitter', 'https://t.co/elenarust')">
+              <i data-lucide="twitter" style="width: 12px; height: 12px;"></i> Twitter (t.co)
+            </button>
+            <button class="referrer-pill" onclick="setReferrer('google', 'https://google.com/search?q=elena+rust')">
+              <i data-lucide="search" style="width: 12px; height: 12px;"></i> Search Engine
+            </button>
+          </div>
+        </div>
+
+        <div class="status-pill-big">
+          <div class="status-left">
+            <div class="status-dot-circle pulse" id="statusCircle"></div>
+            <div class="status-text">
+              <h4 id="statusHeader">Smart Pixel Listening</h4>
+              <p id="statusDesc">Awaiting interactions...</p>
+            </div>
+          </div>
+          <i data-lucide="shield-check" style="color: var(--primary); width: 18px; height: 18px;"></i>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Terminal Box at bottom showing Live Logs -->
+    <div class="terminal-box">
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot green"></div>
+        </div>
+        <span class="terminal-title">tembo-pixel-debugger.log</span>
+        <button class="terminal-clear" onclick="clearLogs()">
+          <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
+          Clear Logs
+        </button>
+      </div>
+      <div class="terminal-logs" id="terminalLogs">
+        <!-- Logs populated dynamically -->
+        <div class="log-entry info">
+          <span class="log-time" id="initTime">--:--:--</span>
+          <span class="log-tag info">System</span>
+          <div class="log-body">Console Initialized. Awaiting tracking triggers...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back to dashboard link -->
+    <a href="/#/" class="nav-back-button">
+      <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+      Back to Tembo Dashboard
+    </a>
+
+  </div>
+
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Set initialization timestamp
+    document.getElementById('initTime').textContent = new Date().toTimeString().split(' ')[0];
+
+    // Reference to local referrer spoofing variable
+    var simulatedReferrer = "";
+
+    /**
+     * Set the simulated referrer variable
+     */
+    function setReferrer(name, refUrl) {
+      simulatedReferrer = refUrl;
+      
+      // Update UI active pills
+      var pills = document.querySelectorAll('.referrer-pill');
+      pills.forEach(function(pill) {
+        if (pill.textContent.trim().toLowerCase().includes(name.toLowerCase())) {
+          pill.classList.add('active');
+        } else {
+          pill.classList.remove('active');
+        }
+      });
+
+      addLog("info", "Spoofed Referrer changed to: " + (refUrl || "[Direct Link]"));
+      
+      // Fire page view again with the spoofed source channel
+      addLog("info", "Firing PageView event with updated referrer...");
+      tembo('track', 'PageView', { source: name });
+    }
+
+    /**
+     * Triggers a link click tracking event
+     */
+    function triggerClick(linkId, linkLabel) {
+      addLog("info", "Fired click event on: '" + linkLabel + "' (ID: " + linkId + ")");
+      tembo('track', 'click', { linkId: linkId });
+    }
+
+    /**
+     * Clear all terminal logs
+     */
+    function clearLogs() {
+      var logs = document.getElementById('terminalLogs');
+      logs.innerHTML = `
+        <div class="log-entry info">
+          <span class="log-time">${new Date().toTimeString().split(' ')[0]}</span>
+          <span class="log-tag info">System</span>
+          <div class="log-body">Console cleared. Awaiting logs...</div>
+        </div>
+      `;
+    }
+
+    /**
+     * Appends a log entry to the terminal logger
+     */
+    function addLog(type, body, json) {
+      var logs = document.getElementById('terminalLogs');
+      
+      var entry = document.createElement('div');
+      entry.className = 'log-entry ' + type;
+      
+      var time = document.createElement('span');
+      time.className = 'log-time';
+      time.textContent = new Date().toTimeString().split(' ')[0];
+      
+      var tag = document.createElement('span');
+      tag.className = 'log-tag ' + type;
+      tag.textContent = type;
+      
+      var logBody = document.createElement('div');
+      logBody.className = 'log-body';
+      logBody.textContent = body;
+
+      entry.appendChild(time);
+      entry.appendChild(tag);
+      entry.appendChild(logBody);
+
+      if (json) {
+        var jsonPre = document.createElement('pre');
+        jsonPre.className = 'log-json';
+        jsonPre.textContent = typeof json === 'object' ? JSON.stringify(json, null, 2) : json;
+        entry.appendChild(jsonPre);
+      }
+
+      logs.appendChild(entry);
+      logs.scrollTop = logs.scrollHeight;
+    }
+
+    // Intercept the Smart Pixel's custom log event dispatch
+    window.addEventListener("tembo_pixel_log", function(e) {
+      var detail = e.detail;
+      var statusCircle = document.getElementById('statusCircle');
+      var statusHeader = document.getElementById('statusHeader');
+      var statusDesc = document.getElementById('statusDesc');
+
+      if (detail.success) {
+        // Handshake active
+        statusCircle.className = "status-dot-circle active";
+        statusHeader.textContent = "Handshake Active";
+        statusHeader.style.color = "var(--tertiary)";
+        statusDesc.textContent = "Last event recorded: " + detail.payload.eventType;
+
+        addLog("success", "Handshake succeeded! Document created in Firestore.", detail.response);
+      } else {
+        // Handshake failed
+        statusCircle.className = "status-dot-circle";
+        statusHeader.textContent = "Handshake Error";
+        statusHeader.style.color = "var(--error)";
+        statusDesc.textContent = detail.error;
+
+        addLog("error", "Handshake failed. Firestore REST returned an error: " + detail.error, detail.payload);
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,317 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: creators
+// Document ID: creatorId (matches Auth UID)
+//
+// Collection: links
+// Document ID: auto-generated
+//
+// Collection: campaigns
+// Document ID: auto-generated
+//
+// Collection: chat_settings
+// Document ID: creatorId (matches Auth UID)
+//
+// Collection: analytics
+// Document ID: auto-generated
+//
+// Collection: beta_keys
+// Document ID: normalized key string
+// Fields:
+//   - assignedTo: string (required)
+//   - active: bool (required)
+//   - createdAt: string | timestamp (optional)
+//
+// Collection: grant_applications
+// Document ID: trackingId (e.g. TCF-2026-XXXX)
+// Fields:
+//   - trackingId: string (required, max 50 chars)
+//   - creatorName: string (required, max 100 chars)
+//   - email: string (required, max 100 chars)
+//   - profileUrl: string (optional, max 300 chars)
+//   - targetTier: string (required, max 50 chars)
+//   - targetTierName: string (optional, max 100 chars)
+//   - targetTierAmount: string (optional, max 50 chars)
+//   - audienceReach: string (optional, max 50 chars)
+//   - niche: string (optional, max 100 chars)
+//   - proposal: string (required, max 2000 chars)
+//   - status: string (required, max 50 chars)
+//   - submittedAt: string | timestamp (required)
+//
+// Collection: affiliate_applications
+// Document ID: referralCode (e.g. TEMBO-XXXX-XXX)
+// Fields:
+//   - referralCode: string (required, max 50 chars)
+//   - partnerName: string (required, max 100 chars)
+//   - email: string (required, max 100 chars)
+//   - channelUrl: string (optional, max 300 chars)
+//   - audienceSize: string (optional, max 50 chars)
+//   - payoutMethod: string (optional, max 50 chars)
+//   - strategy: string (optional, max 1000 chars)
+//   - status: string (required, max 50 chars)
+//   - submittedAt: string | timestamp (required)
+//
+// Collection: support_tickets
+// Document ID: ticketId (e.g. TKT-XXXX)
+// Fields:
+//   - ticketId: string (required, max 50 chars)
+//   - name: string (required, max 100 chars)
+//   - email: string (required, max 100 chars)
+//   - category: string (optional, max 50 chars)
+//   - message: string (required, max 2000 chars)
+//   - status: string (required, max 50 chars)
+//   - submittedAt: string | timestamp (required)
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getAdminCreatorId() {
+      let adminDoc = get(/databases/$(database)/documents/admin_sessions/$(request.auth.uid));
+      return adminDoc != null ? adminDoc.data.creatorId : null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && (request.auth.uid == userId || getAdminCreatorId() == userId);
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && (request.auth.uid == resource.data.creatorId || getAdminCreatorId() == resource.data.creatorId);
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && getAdminCreatorId() != null;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidStringLength(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+        request.resource.data[field].size() >= minLen &&
+        request.resource.data[field].size() <= maxLen;
+    }
+
+    function isValidOptionalString(field, minLen, maxLen) {
+      return !(field in request.resource.data) ||
+             (request.resource.data[field] is string &&
+              request.resource.data[field].size() >= minLen &&
+              request.resource.data[field].size() <= maxLen);
+    }
+
+    function isValidUrl(urlStr) {
+      return urlStr is string &&
+        (urlStr.matches("^https://.*") || urlStr.matches("^http://.*"));
+    }
+
+    function isValidEmail(emailStr) {
+      return emailStr is string &&
+        emailStr.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidCreator() {
+      return hasOnlyAllowedFields([
+        'displayName', 'bio', 'handle', 'tier', 'videoBlock',
+        'links', 'backgroundTheme', 'customBgUrl', 'avatarUrl',
+        'email', 'location', 'updatedAt', 'subscribers'
+      ]) &&
+      isValidOptionalString('displayName', 0, 100) &&
+      isValidOptionalString('bio', 0, 500) &&
+      isValidOptionalString('handle', 0, 100) &&
+      isValidOptionalString('tier', 0, 50) &&
+      isValidOptionalString('backgroundTheme', 0, 50) &&
+      isValidOptionalString('customBgUrl', 0, 2000) &&
+      isValidOptionalString('email', 0, 100) &&
+      isValidOptionalString('location', 0, 100);
+    }
+
+    function isValidLink() {
+      return hasRequiredFields(['creatorId', 'title', 'url']) &&
+             hasOnlyAllowedFields(['creatorId', 'title', 'url', 'isActive']) &&
+             isValidStringLength('creatorId', 1, 50) &&
+             isValidStringLength('title', 1, 100) &&
+             isValidUrl(request.resource.data.url) &&
+             request.resource.data.url.size() <= 500 &&
+             (!('isActive' in request.resource.data) || request.resource.data.isActive is bool);
+    }
+
+    function isValidCampaign() {
+      return hasRequiredFields(['creatorId', 'name']) &&
+             hasOnlyAllowedFields(['creatorId', 'name', 'budget']) &&
+             isValidStringLength('creatorId', 1, 50) &&
+             isValidStringLength('name', 1, 100) &&
+             (!('budget' in request.resource.data) || (request.resource.data.budget is number && request.resource.data.budget >= 0));
+    }
+
+    function isValidChatSettings() {
+      return hasOnlyAllowedFields(['welcomeMessage', 'isOnline']) &&
+             isValidOptionalString('welcomeMessage', 0, 500) &&
+             (!('isOnline' in request.resource.data) || request.resource.data.isOnline is bool);
+    }
+
+    function isValidAnalytics() {
+      return hasRequiredFields(['creatorId', 'eventType']) &&
+             hasOnlyAllowedFields(['creatorId', 'eventType', 'timestamp', 'source', 'pathway', 'targetUrl']) &&
+             isValidStringLength('creatorId', 1, 50) &&
+             isValidStringLength('eventType', 1, 50) &&
+             isValidOptionalString('source', 0, 50) &&
+             isValidOptionalString('pathway', 0, 50) &&
+             isValidOptionalString('targetUrl', 0, 500) &&
+             (!('timestamp' in request.resource.data) || request.resource.data.timestamp is timestamp);
+    }
+
+    function isValidGrantApplication() {
+      return hasRequiredFields(['trackingId', 'creatorName', 'email', 'targetTier', 'proposal', 'status', 'submittedAt']) &&
+             isValidStringLength('trackingId', 1, 50) &&
+             isValidStringLength('creatorName', 1, 100) &&
+             isValidStringLength('email', 3, 100) &&
+             isValidEmail(request.resource.data.email) &&
+             isValidStringLength('targetTier', 1, 50) &&
+             isValidStringLength('proposal', 1, 2000) &&
+             isValidStringLength('status', 1, 50) &&
+             isValidOptionalString('profileUrl', 0, 300) &&
+             isValidOptionalString('targetTierName', 0, 100) &&
+             isValidOptionalString('targetTierAmount', 0, 50) &&
+             isValidOptionalString('audienceReach', 0, 50) &&
+             isValidOptionalString('niche', 0, 100);
+    }
+
+    function isValidAffiliateApplication() {
+      return hasRequiredFields(['referralCode', 'partnerName', 'email', 'status', 'submittedAt']) &&
+             isValidStringLength('referralCode', 1, 50) &&
+             isValidStringLength('partnerName', 1, 100) &&
+             isValidStringLength('email', 3, 100) &&
+             isValidEmail(request.resource.data.email) &&
+             isValidStringLength('status', 1, 50) &&
+             isValidOptionalString('channelUrl', 0, 300) &&
+             isValidOptionalString('audienceSize', 0, 50) &&
+             isValidOptionalString('payoutMethod', 0, 50) &&
+             isValidOptionalString('strategy', 0, 1000);
+    }
+
+    function isValidSupportTicket() {
+      return hasRequiredFields(['ticketId', 'name', 'email', 'message', 'status', 'submittedAt']) &&
+             isValidStringLength('ticketId', 1, 50) &&
+             isValidStringLength('name', 1, 100) &&
+             isValidStringLength('email', 3, 100) &&
+             isValidEmail(request.resource.data.email) &&
+             isValidStringLength('message', 1, 2000) &&
+             isValidStringLength('status', 1, 50) &&
+             isValidOptionalString('category', 0, 50);
+    }
+
+    // ===============================================================
+    // Security Rules
+    // ===============================================================
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 1. Creators Profiles rules
+    // Publicly readable. Only owner can write.
+    match /creators/{creatorId} {
+      allow read: if true;
+      allow create: if isOwner(creatorId) && isValidCreator();
+      allow update: if isOwner(creatorId) && isValidCreator();
+      allow delete: if isOwner(creatorId);
+    }
+
+    // 2. Creator Link collections rules
+    // Publicly readable. Only owner can write.
+    match /links/{linkId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+                    request.resource.data.creatorId == request.auth.uid && 
+                    isValidLink();
+      allow update: if isDocOwner() && 
+                    areImmutableFieldsUnchanged(['creatorId']) && 
+                    isValidLink();
+      allow delete: if isDocOwner();
+    }
+
+    // 3. Campaigns rules
+    // Only creator can read/write
+    match /campaigns/{campaignId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && 
+                    request.resource.data.creatorId == request.auth.uid && 
+                    isValidCampaign();
+      allow update: if isDocOwner() && 
+                    areImmutableFieldsUnchanged(['creatorId']) && 
+                    isValidCampaign();
+      allow delete: if isDocOwner();
+    }
+
+    // 4. Chat Settings rules
+    // Publicly readable. Only owner can write.
+    match /chat_settings/{creatorId} {
+      allow read: if true;
+      allow create: if isOwner(creatorId) && isValidChatSettings();
+      allow update: if isOwner(creatorId) && isValidChatSettings();
+      allow delete: if isOwner(creatorId);
+    }
+    
+    // 5. Analytics events rules
+    // Publicly creatable. Authenticated users can read. No updates/deletes.
+    match /analytics/{eventId} {
+      allow read: if isAuthenticated();
+      allow create: if isValidAnalytics();
+      allow update, delete: if false;
+    }
+
+    // 6. Beta Keys rules
+    // Admin backend and authenticated owner/admin can read & write
+    match /beta_keys/{keyId} {
+      allow read, write: if isAdmin();
+    }
+
+    // 7. Creator Fund Grant Applications
+    // Publicly creatable with validation schema. Admin can read, update, delete.
+    match /grant_applications/{applicationId} {
+      allow create: if isValidGrantApplication();
+      allow read, update, delete: if isAdmin();
+    }
+
+    // 8. Affiliate Partner Applications
+    // Publicly creatable with validation schema. Admin can read, update, delete.
+    match /affiliate_applications/{applicationId} {
+      allow create: if isValidAffiliateApplication();
+      allow read, update, delete: if isAdmin();
+    }
+
+    // 9. Support Tickets
+    // Publicly creatable with validation schema. Admin can read, update, delete.
+    match /support_tickets/{ticketId} {
+      allow create: if isValidSupportTicket();
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

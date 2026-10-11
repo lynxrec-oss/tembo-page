@@ -1,0 +1,28 @@
+{
+  "name": "tembo-video-generator",
+  "version": "1.0.0",
+  "description": "Standalone programmatic video generator for Tembo Page using Remotion (vertical 9:16 format)",
+  "main": "src/index.tsx",
+  "scripts": {
+    "preview": "remotion preview src/index.tsx",
+    "render:all": "npm run render:what-is-tembo && npm run render:how-to-builder && npm run render:how-to-ai && npm run render:traffic && npm run render:master-16x9 && npm run render:master-9x16",
+    "render:what-is-tembo": "remotion render src/index.tsx what-is-tembo out/what-is-tembo.mp4 --overwrite && cp out/what-is-tembo.mp4 \"/Volumes/G-Drive/chroma key pro/tembo-videos/\"",
+    "render:how-to-builder": "remotion render src/index.tsx how-to-builder out/how-to-builder.mp4 --overwrite && cp out/how-to-builder.mp4 \"/Volumes/G-Drive/chroma key pro/tembo-videos/\"",
+    "render:how-to-ai": "remotion render src/index.tsx how-to-ai out/how-to-ai.mp4 --overwrite && cp out/how-to-ai.mp4 \"/Volumes/G-Drive/chroma key pro/tembo-videos/\"",
+    "render:traffic": "remotion render src/index.tsx traffic-personalization out/traffic-personalization.mp4 --overwrite && cp out/traffic-personalization.mp4 \"/Volumes/G-Drive/chroma key pro/tembo-videos/\"",
+    "render:master-16x9": "remotion render src/index.tsx master-explainer-16x9 out/master-explainer-16x9.mp4 --overwrite && cp out/master-explainer-16x9.mp4 \"/Volumes/G-Drive/chroma key pro/tembo-videos/\"",
+    "render:master-9x16": "remotion render src/index.tsx master-explainer-9x16 out/master-explainer-9x16.mp4 --overwrite && cp out/master-explainer-9x16.mp4 \"/Volumes/G-Drive/chroma key pro/tembo-videos/\""
+  },
+  "dependencies": {
+    "lucide-react": "^0.475.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "4.0.470"
+  },
+  "devDependencies": {
+    "@remotion/cli": "4.0.470",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.4.5"
+  }
+}

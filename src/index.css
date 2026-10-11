@@ -1,0 +1,242 @@
+@import "tailwindcss";
+
+/* =============================================
+   TEMBO PAGE — Savannah Sunset Design System
+   ============================================= */
+
+@theme {
+  /* Brand Colors */
+  --color-primary: #f2ca50;
+  --color-primary-fixed: #ffe088;
+  --color-primary-dim: #e9c349;
+  --color-primary-container: #3a2f00;
+
+  /* Surface Scale (warm charcoal, not cold gray) */
+  --color-background: #16130b;
+  --color-surface: #16130b;
+  --color-surface-dim: #110e07;
+  --color-surface-container-lowest: #110e07;
+  --color-surface-container-low: #1f1b13;
+  --color-surface-container: #231f17;
+  --color-surface-container-high: #2d2a21;
+  --color-surface-container-highest: #38342b;
+  --color-surface-variant: #38342b;
+  --color-surface-bright: #3d392f;
+
+  /* On-Surface Text */
+  --color-on-surface: #eae1d4;
+  --color-on-surface-variant: #c9bfab;
+  --color-on-background: #eae1d4;
+  --color-on-primary: #3c2f00;
+
+  /* Tertiary / Success */
+  --color-tertiary: #6fe692;
+  --color-tertiary-container: #51c979;
+  --color-on-tertiary: #003919;
+
+  /* Secondary */
+  --color-secondary: #c7c7ba;
+  --color-secondary-container: #46483d;
+  --color-on-secondary: #2f3128;
+
+  /* Outline */
+  --color-outline: #99907c;
+  --color-outline-variant: #4d4635;
+
+  /* Error */
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+
+  /* Typography */
+  --font-display: "Montserrat", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-2xl: 3rem;
+  --radius-full: 9999px;
+}
+
+/* =============================================
+   Base Styles
+   ============================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* =============================================
+   Savannah Ambient Effects
+   ============================================= */
+.hero-glow {
+  background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(242, 202, 80, 0.12) 0%, transparent 70%);
+}
+
+.section-glow-left {
+  background: radial-gradient(ellipse 60% 60% at -5% 50%, rgba(242, 202, 80, 0.06) 0%, transparent 60%);
+}
+
+.section-glow-right {
+  background: radial-gradient(ellipse 60% 60% at 105% 50%, rgba(111, 230, 146, 0.05) 0%, transparent 60%);
+}
+
+.noise-texture {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* =============================================
+   Card & Glow Effects
+   ============================================= */
+.glow-card {
+  box-shadow:
+    0 0 0 1px rgba(242, 202, 80, 0.08),
+    0 8px 40px -12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.glow-card:hover {
+  box-shadow:
+    0 0 0 1px rgba(242, 202, 80, 0.15),
+    0 12px 60px -12px rgba(242, 202, 80, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+.glow-button {
+  box-shadow: 0 0 24px -4px rgba(242, 202, 80, 0.3);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.glow-button:hover {
+  box-shadow: 0 0 36px -4px rgba(242, 202, 80, 0.45);
+  transform: translateY(-2px);
+}
+
+.glow-card-featured {
+  box-shadow:
+    0 0 0 1px rgba(242, 202, 80, 0.2),
+    0 16px 80px -12px rgba(242, 202, 80, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* =============================================
+   Phone Mockup
+   ============================================= */
+.phone-frame {
+  background: linear-gradient(145deg, #2a2620 0%, #1a1710 50%, #0e0c08 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 40px 120px -20px rgba(0, 0, 0, 0.8),
+    0 0 80px -20px rgba(242, 202, 80, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.phone-screen {
+  background: linear-gradient(180deg, #1a1710 0%, #16130b 100%);
+}
+
+/* =============================================
+   Marquee / Scroll Strip
+   ============================================= */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee-scroll 28s linear infinite;
+  width: max-content;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* =============================================
+   Pricing Toggle
+   ============================================= */
+.pricing-toggle-active {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+/* =============================================
+   Scroll Reveal (for JS-driven reveal)
+   ============================================= */
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =============================================
+   Scrollbar
+   ============================================= */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-container-lowest);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
+
+/* =============================================
+   Prose / Highlight Utilities
+   ============================================= */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #f2ca50 0%, #ffe088 50%, #e9a832 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-glow-gold {
+  border-color: rgba(242, 202, 80, 0.2);
+  box-shadow: 0 0 20px -8px rgba(242, 202, 80, 0.2);
+}
+
+.ai-badge-pulse {
+  animation: pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.float-slow {
+  animation: float-anim 6s ease-in-out infinite;
+}
+
+@keyframes float-anim {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
