@@ -583,25 +583,35 @@ export default function PublicProfile({ creatorId }: PublicProfileProps) {
     alert(`Public pathway url copied: ${url}`);
   };
 
-  return (
-    <div 
-      className="min-h-screen w-full relative flex flex-col items-center justify-start py-8 px-4"
-      style={{ 
-        backgroundColor: '#16130b', 
-        color: '#eae1d4', 
-        fontFamily: 'Inter, sans-serif',
-        backgroundImage: profileData?.customBgUrl
-          ? `url(${profileData.customBgUrl})`
-          : profileData?.backgroundTheme && BACKGROUND_PRESETS[profileData.backgroundTheme]
-            ? BACKGROUND_PRESETS[profileData.backgroundTheme].bg
-            : resolvedCreator === 'tembo'
-              ? `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f2ca50' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-              : 'none',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-    >
+    const activeBackground = profileData?.customBgUrl
+      ? `url(${profileData.customBgUrl}) center/cover no-repeat fixed #16130b`
+      : profileData?.backgroundTheme && BACKGROUND_PRESETS[profileData.backgroundTheme]
+        ? BACKGROUND_PRESETS[profileData.backgroundTheme].bg
+        : resolvedCreator === 'tembo'
+          ? `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f2ca50' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") #16130b`
+          : (BACKGROUND_PRESETS.sunset?.bg || '#16130b');
+
+    return (
+      <div 
+        className="min-h-screen w-full relative flex flex-col items-center justify-start py-8 px-4"
+        style={{ 
+          color: '#eae1d4', 
+          fontFamily: 'Inter, sans-serif',
+          background: activeBackground,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {profileData?.customBgUrl && (
+          <div 
+            className="fixed inset-0 pointer-events-none z-0" 
+            style={{ 
+              background: 'rgba(22, 19, 11, 0.65)', 
+              backdropFilter: 'blur(8px)' 
+            }} 
+          />
+        )}
       {/* Dynamic backdrop glows */}
       <div className="fixed inset-0 noise-texture z-0 pointer-events-none opacity-20" />
       <div 
