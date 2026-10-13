@@ -275,7 +275,7 @@ service cloud.firestore {
     // 3. Campaigns rules
     // Authenticated users can read their workspace campaigns. Creators/owners can write.
     match /campaigns/{campaignId} {
-      allow read: if isAuthenticated();
+      allow read: if isDocOwner();
       allow create: if isAuthenticated() && 
                     isOwner(request.resource.data.creatorId) && 
                     isValidCampaign();
