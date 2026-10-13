@@ -4,7 +4,7 @@
  * Manage audience routing profiles, run variant split testing, and schedule pin/hide/reveal drops.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Plus, Calendar, Clock, Play, Pause, Trash2, Sparkles, Check, 
@@ -12,6 +12,8 @@ import {
   ArrowRight, Camera, Film, Mail, Link, Edit, CheckCircle2, RefreshCw
 } from 'lucide-react';
 import { Sidebar } from './Sidebar';
+import { collection, query, where, onSnapshot, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from './firebase';
 
 interface RoutingCampaign {
   id: string;
@@ -138,12 +140,13 @@ const INITIAL_DROPS: ScheduledDrop[] = [
 
 export default function Campaigns() {
   const [activeTab, setActiveTab] = useState<'routing' | 'ab' | 'drops'>('routing');
-  const isBeta = typeof window !== 'undefined' && localStorage.getItem('beta_bypass') === 'true';
+  const isBetaWorkspace = typeof window !== 'undefined' && (localStorage.getItem('beta_bypass') === 'true' || localStorage.getItem('active_creator_id') === 'beta-tester');
+  const creatorId = (typeof window !== 'undefined' && localStorage.getItem('active_creator_id')) || (isBetaWorkspace ? 'beta-tester' : 'mycinetoolbox');
   
   // Real-time Lists State
-  const [campaigns, setCampaigns] = useState<RoutingCampaign[]>(isBeta ? [] : INITIAL_CAMPAIGNS);
-  const [tests, setTests] = useState<ABTest[]>(isBeta ? [] : INITIAL_TESTS);
-  const [drops, setDrops] = useState<ScheduledDrop[]>(isBeta ? [] : INITIAL_DROPS);
+  const [campaigns, setCampaigns] = useState<RoutingCampaign[]>([]);
+  const [tests, setTests] = useState<ABTest[]>(isBetaWorkspace ? [] : INITIAL_TESTS);
+  const [drops, setDrops] = useState<ScheduledDrop[]>(isBetaWorkspace ? [] : INITIAL_DROPS);
   
   // Interactivity Simulator & Creator Modals
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -155,20 +158,72 @@ export default function Campaigns() {
   const [targetLayout, setTargetLayout] = useState<'Merch First' | 'Video First' | 'Booking First' | 'None'>('Merch First');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Subscribe to Firestore campaigns collection scoped to current creator workspace
+  useEffect(() => {
+    if (!creatorId) return;
+
+    const q = query(
+      collection(db, 'campaigns'),
+      where('creatorId', '==', creatorId)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const loaded: RoutingCampaign[] = [];
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          loaded.push({
+            id: docSnap.id,
+            icon: (data.icon as RoutingCampaign['icon']) || (data.source === 'TikTok' ? 'film' : data.source === 'Newsletter' ? 'mail' : data.source === 'YouTube' ? 'link' : 'camera'),
+            title: data.title || data.name || 'Untitled Campaign',
+            status: (data.status as RoutingCampaign['status']) || 'Active',
+            source: data.source || 'Instagram',
+            layout: data.layout || 'Merch First',
+            clicks: data.clicks || (data.layout === 'None' ? '0' : '1.2k'),
+            conversion: data.conversion || (data.layout === 'None' ? '0%' : '5.8%'),
+            revenue: data.revenue || (data.layout === 'None' ? '$0' : '$240')
+          });
+        });
+        setCampaigns(loaded);
+      } else {
+        // If Firestore is empty:
+        // For beta workspace, keep empty state []
+        // For owner workspace without saved campaigns, show demo/initial campaigns
+        setCampaigns(isBetaWorkspace ? [] : INITIAL_CAMPAIGNS);
+      }
+    }, (err) => {
+      console.error("Firestore campaigns listener error:", err);
+      if (!isBetaWorkspace) {
+        setCampaigns(INITIAL_CAMPAIGNS);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [creatorId, isBetaWorkspace]);
+
   const triggerToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 3000);
   };
 
-  const handleToggleCampaignStatus = (id: string) => {
-    setCampaigns(prev => prev.map(c => {
-      if (c.id === id) {
-        const nextStatus = c.status === 'Active' ? 'Paused' : c.status === 'Paused' ? 'Active' : 'Active';
-        triggerToast(`Campaign "${c.title}" status is now ${nextStatus}`);
-        return { ...c, status: nextStatus };
-      }
-      return c;
-    }));
+  const handleToggleCampaignStatus = async (id: string) => {
+    const campaign = campaigns.find(c => c.id === id);
+    if (!campaign) return;
+    const nextStatus: RoutingCampaign['status'] = campaign.status === 'Active' ? 'Paused' : 'Active';
+    triggerToast(`Campaign "${campaign.title}" status is now ${nextStatus}`);
+    
+    // Optimistic UI update
+    setCampaigns(prev => prev.map(c => c.id === id ? { ...c, status: nextStatus } : c));
+
+    try {
+      const docRef = doc(db, 'campaigns', id);
+      await updateDoc(docRef, {
+        status: nextStatus,
+        updatedAt: serverTimestamp()
+      });
+    } catch (err) {
+      console.error("Failed to update campaign status in Firestore:", err);
+    }
   };
 
   const handleToggleDrop = (id: string) => {
@@ -202,32 +257,59 @@ export default function Campaigns() {
     }));
   };
 
-  const handleCreateCampaign = (e: React.FormEvent) => {
+  const handleCreateCampaign = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!campaignName.trim()) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      const newCampaign: RoutingCampaign = {
-        id: Math.random().toString(),
-        icon: trafficSource === 'Instagram' ? 'camera' : trafficSource === 'TikTok' ? 'film' : trafficSource === 'Newsletter' ? 'mail' : 'link',
-        title: campaignName,
-        status: targetLayout === 'None' ? 'Draft' : 'Active',
+    const campaignStatus: RoutingCampaign['status'] = targetLayout === 'None' ? 'Draft' : 'Active';
+    const campaignIcon: RoutingCampaign['icon'] = trafficSource === 'Instagram' ? 'camera' : trafficSource === 'TikTok' ? 'film' : trafficSource === 'Newsletter' ? 'mail' : 'link';
+    const clicksVal = targetLayout === 'None' ? '0' : '1.2k';
+    const conversionVal = targetLayout === 'None' ? '0%' : '5.8%';
+    const revenueVal = targetLayout === 'None' ? '$0' : '$240';
+    const trimmedTitle = campaignName.trim();
+
+    try {
+      const docRef = await addDoc(collection(db, 'campaigns'), {
+        creatorId,
+        title: trimmedTitle,
+        name: trimmedTitle,
+        status: campaignStatus,
         source: trafficSource,
         layout: targetLayout,
-        clicks: targetLayout === 'None' ? '0' : '1.2k',
-        conversion: targetLayout === 'None' ? '0%' : '5.8%',
-        revenue: targetLayout === 'None' ? '$0' : '$240'
-      };
+        icon: campaignIcon,
+        clicks: clicksVal,
+        conversion: conversionVal,
+        revenue: revenueVal,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
 
-      setCampaigns(prev => [newCampaign, ...prev]);
+      // Optimistic update
+      const newCampaign: RoutingCampaign = {
+        id: docRef.id,
+        icon: campaignIcon,
+        title: trimmedTitle,
+        status: campaignStatus,
+        source: trafficSource,
+        layout: targetLayout,
+        clicks: clicksVal,
+        conversion: conversionVal,
+        revenue: revenueVal
+      };
+      setCampaigns(prev => [newCampaign, ...prev.filter(c => c.id !== docRef.id)]);
+
       setIsSubmitting(false);
       setShowCreateModal(false);
       setCampaignName('');
       setTrafficSource('Instagram');
       setTargetLayout('Merch First');
       triggerToast('New smart audience campaign launched successfully!');
-    }, 1200);
+    } catch (err) {
+      console.error("Failed to deploy campaign to Firestore:", err);
+      setIsSubmitting(false);
+      triggerToast('Failed to deploy campaign. Please try again.');
+    }
   };
 
   return (
