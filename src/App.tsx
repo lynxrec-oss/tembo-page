@@ -1273,7 +1273,7 @@ function Footer() {
   return (
     <footer style={{ background: '#110e07', borderTop: '1px solid rgba(77,70,53,0.3)' }}>
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10 md:gap-12 mb-12">
           {/* Brand col */}
           <div className="md:col-span-1">
             <div className="mb-3">
