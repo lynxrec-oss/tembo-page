@@ -1187,7 +1187,7 @@ export default function PublicProfile({ creatorId }: PublicProfileProps) {
                   </div>
                   <h4 className="font-display font-bold text-lg text-[#eae1d4] mb-2">Order Dispatched successfully!</h4>
                   <p className="text-xs text-on-surface-variant leading-relaxed max-w-xs mx-auto mb-6">
-                    Excellent choice! Your <strong>Organic Savannah Tee (Size {selectedSize})</strong> is registered. We've allocated inventory, and dispatch will follow. Welcome to the Pride herd!
+                    Excellent choice! Your <strong>Organic Savannah Tee (Size {selectedSize})</strong> is registered. We've allocated inventory, and dispatch will follow. Welcome to the Herd!
                   </p>
                   <button 
                     onClick={() => {

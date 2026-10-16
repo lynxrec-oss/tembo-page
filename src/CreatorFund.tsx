@@ -58,7 +58,7 @@ const GRANT_TIERS: GrantTier[] = [
   },
   {
     id: 'catalyst',
-    name: 'Pride Catalyst Fellowship',
+    name: 'Herd Catalyst Fellowship',
     amount: '$10,000 + Co-Pilot',
     audience: 'Established voices & creative collectives (150K+)',
     description: 'For trailblazers co-developing bespoke intelligent features, smart pixels, and viral hubs.',

@@ -204,7 +204,7 @@ export default function Onboarding() {
   const themeConfig: Record<NicheTheme, { name: string; primary: string; bg: string; text: string; glow: string }> = {
     sunset: { name: 'Savannah Sunset', primary: '#f2ca50', bg: '#16130b', text: '#eae1d4', glow: 'rgba(242, 202, 80, 0.15)' },
     oasis: { name: 'Teal Oasis', primary: '#6fe692', bg: '#081c15', text: '#d8f3dc', glow: 'rgba(111, 230, 146, 0.15)' },
-    forest: { name: 'Pride Forest', primary: '#ffe088', bg: '#0c1a1a', text: '#eae1d4', glow: 'rgba(255, 224, 136, 0.15)' },
+    forest: { name: 'Herd Forest', primary: '#ffe088', bg: '#0c1a1a', text: '#eae1d4', glow: 'rgba(255, 224, 136, 0.15)' },
     amber: { name: 'Sunrise Amber', primary: '#e9c349', bg: '#1f1605', text: '#eae1d4', glow: 'rgba(233, 195, 73, 0.15)' }
   };
 
@@ -281,7 +281,7 @@ export default function Onboarding() {
                 </div>
                 <h3 className="font-display font-bold text-2xl text-primary mb-3">Onboarding Complete!</h3>
                 <p className="text-xs text-on-surface-variant max-w-sm leading-relaxed mb-8">
-                  Welcome to the pride herd! Your digital savanna space is active, calibrated, and initialized with theme <strong>{activeTheme.name}</strong>.
+                  Welcome to the herd! Your digital savanna space is active, calibrated, and initialized with theme <strong>{activeTheme.name}</strong>.
                 </p>
                 <button 
                   onClick={() => window.location.hash = '#/dashboard'}

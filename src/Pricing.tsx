@@ -270,13 +270,13 @@ export default function Pricing() {
         <section className="w-full mt-6 max-w-4xl mx-auto glass-card rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
           <div className="absolute inset-0 noise-texture opacity-25" />
           <div className="flex flex-col gap-1.5 relative z-10 text-center md:text-left">
-            <h4 className="font-display font-bold text-lg text-on-surface uppercase tracking-wider">Agency Pride</h4>
+            <h4 className="font-display font-bold text-lg text-on-surface uppercase tracking-wider">Agency Herd</h4>
             <p className="text-xs text-on-surface-variant font-body">
               Need to manage multiple creator profiles, A/B variant branches, and team accesses? Plans start at $99/mo.
             </p>
           </div>
           <button 
-            onClick={() => triggerToast('Sales contact initiated! A pride coordinator will email you shortly.', 'success')}
+            onClick={() => triggerToast('Sales contact initiated! A herd coordinator will email you shortly.', 'success')}
             className="py-3 px-8 rounded-full border border-primary text-primary font-display font-bold text-xs uppercase tracking-wider hover:bg-primary/10 transition-colors whitespace-nowrap cursor-pointer z-10 bg-transparent"
           >
             Contact Sales

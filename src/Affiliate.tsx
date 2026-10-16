@@ -147,7 +147,7 @@ export default function AffiliatePage() {
             ) : (
               <>
                 <a href="#/login" className="text-sm font-medium px-4 py-2 hover:text-primary transition-colors text-decoration-none" style={{ color: '#eae1d4' }}>Log In</a>
-                <a href="#apply" className="glow-button bg-primary text-[#3c2f00] text-sm font-bold px-5 py-2.5 rounded-full text-decoration-none">Join the Pride</a>
+                <a href="#apply" className="glow-button bg-primary text-[#3c2f00] text-sm font-bold px-5 py-2.5 rounded-full text-decoration-none">Join the Herd</a>
               </>
             )}
           </div>
@@ -176,7 +176,7 @@ export default function AffiliatePage() {
                 <a href="#/fund" className="text-base font-medium text-decoration-none" style={{ color: '#eae1d4' }} onClick={() => setMobileOpen(false)}>Creator Fund</a>
                 <div className="pt-2 flex flex-col gap-3">
                   <a href="#/login" className="w-full text-center text-sm font-medium py-2.5 rounded-full border text-decoration-none" style={{ color: '#eae1d4', borderColor: '#4d4635' }}>Log In</a>
-                  <a href="#apply" className="w-full text-center text-sm font-bold py-2.5 rounded-full glow-button bg-primary text-[#3c2f00] text-decoration-none" onClick={() => setMobileOpen(false)}>Join the Pride</a>
+                  <a href="#apply" className="w-full text-center text-sm font-bold py-2.5 rounded-full glow-button bg-primary text-[#3c2f00] text-decoration-none" onClick={() => setMobileOpen(false)}>Join the Herd</a>
                 </div>
               </div>
             </motion.div>
@@ -193,7 +193,7 @@ export default function AffiliatePage() {
             <Users size={32} />
           </div>
           <h1 className="text-3xl md:text-5xl font-display font-black text-[#eae1d4] mb-6" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-            Join the Pride. <br />
+            Join the Herd. <br />
             <span className="text-gradient-gold">Earn Recurring Bounty.</span>
           </h1>
           <p className="text-xs md:text-sm text-[#c9bfab] leading-relaxed max-w-2xl mx-auto">
@@ -331,7 +331,7 @@ export default function AffiliatePage() {
                   <CheckCircle2 size={36} />
                 </div>
                 <h3 className="text-xl font-bold text-primary mb-2" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                  Welcome to the Pride Partner Network!
+                  Welcome to the Herd Partner Network!
                 </h3>
                 <p className="text-xs text-[#c9bfab] max-w-md mx-auto leading-relaxed mb-6">
                   Congratulations, <strong className="text-[#eae1d4]">{submittedPartner.name}</strong>. Your partner account has been provisioned. Use your personalized tracking link below:
@@ -513,7 +513,7 @@ export default function AffiliatePage() {
               },
               {
                 q: 'Are promotional materials provided?',
-                a: 'Yes! Upon joining the pride affiliate list, you get immediate access to our partner asset bank, containing sunset logos, high-resolution device mockup screens, email templates, and savannah-branded marketing cards.'
+                a: 'Yes! Upon joining the herd affiliate list, you get immediate access to our partner asset bank, containing sunset logos, high-resolution device mockup screens, email templates, and savannah-branded marketing cards.'
               }
             ].map((faq, i) => {
               const isOpen = activeFaq === i;

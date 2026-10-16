@@ -95,7 +95,7 @@ export const PRICING_PLANS: PricingPlan[] = [
 ];
 
 export const AGENCY_PLAN = {
-  name: 'Agency Pride',
+  name: 'Agency Herd',
   startingPrice: '$99/mo',
   description: 'Need to manage multiple creator profiles, A/B variant branches, and team accesses? Plans start at $99/mo.',
   cta: 'Contact Sales',

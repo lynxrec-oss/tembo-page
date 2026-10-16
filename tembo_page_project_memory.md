@@ -88,7 +88,7 @@ Tembo Page is designed to be a complete suite comprising **10 core pages/flows**
 7. **Campaign Manager** (A/B testing, scheduled drops).
 8. **Tembo Chat Setup** (Real-time creator-to-fan conversational widget).
 9. **Onboarding Flow** (Selecting niche, claiming handle, choosing starter theme).
-10. **Pricing Plans** (Free, Pro/Savannah Explorer, Agency/Pride Leader).
+10. **Pricing Plans** (Free, Pro/Savannah Explorer, Agency/Herd Leader).
 
 ---
 

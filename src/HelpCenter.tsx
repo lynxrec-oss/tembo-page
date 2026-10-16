@@ -74,7 +74,7 @@ const FAQ_DATA: FAQItem[] = [
     id: 'billing-1',
     category: 'billing',
     question: 'Can I connect my own custom CNAME domains to my page?',
-    answer: "Yes, this is fully supported on the Creator Pro and Pride Leader tiers. Inside your Settings panel, navigate to 'Domain & Security' to map your personal domain (e.g., bio.yourbrand.com) via CNAME records. We provision automatic global SSL certificates."
+    answer: "Yes, this is fully supported on the Creator Pro and Herd Leader tiers. Inside your Settings panel, navigate to 'Domain & Security' to map your personal domain (e.g., bio.yourbrand.com) via CNAME records. We provision automatic global SSL certificates."
   },
   {
     id: 'billing-2',

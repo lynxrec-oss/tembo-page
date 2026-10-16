@@ -196,7 +196,7 @@ export default function ContactSupport() {
                     </div>
                     <h3 className="text-lg font-display font-bold text-primary mb-2">Ticket Dispatched Successfully!</h3>
                     <p className="text-xs text-[#c9bfab] leading-relaxed max-w-xs mx-auto mb-6">
-                      Thank you! Your ticket was cataloged in our queue. A pride advisor will reach out to your inbox within the next 2 hours.
+                      Thank you! Your ticket was cataloged in our queue. A herd advisor will reach out to your inbox within the next 2 hours.
                     </p>
                     <button 
                       onClick={() => setIsSent(false)}
@@ -317,7 +317,7 @@ export default function ContactSupport() {
                   {
                     icon: <MessageCircle size={16} />,
                     title: 'Community Discord',
-                    desc: 'The Tembo Pride Channel (Coming Soon)',
+                    desc: 'The Tembo Herd Channel (Coming Soon)',
                     actionLabel: 'Request Invite',
                     href: 'mailto:herd@tembopage.com?subject=Discord%20Community%20Invite%20Request'
                   }

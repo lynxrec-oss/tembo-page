@@ -210,7 +210,7 @@ const ALL_LINK_CARDS: LinkCard[] = [
   {
     id: 'membership',
     icon: <Star size={16} />,
-    title: 'Join the Pride · Members Only',
+    title: 'Join the Herd · Members Only',
     subtitle: '680 members · From $5/mo',
     accent: '#ffe088',
     sources: ['youtube', 'newsletter'],
@@ -1073,7 +1073,7 @@ function PricingPlans() {
         <div className="text-center mb-16">
           <p className="text-xs font-semibold mb-3 tracking-widest uppercase" style={{ color: '#f2ca50' }}>Pricing</p>
           <h2 className="font-black mb-4" style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 'clamp(2rem, 5vw, 3rem)', color: '#eae1d4', letterSpacing: '-0.02em' }}>
-            Find Your Place in the Pride
+            Find Your Place in the Herd
           </h2>
           <p className="max-w-xl mx-auto text-base mb-8" style={{ color: '#c9bfab' }}>
             Start free, scale as you grow. No hidden fees. No surprises.
